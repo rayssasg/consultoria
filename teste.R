@@ -4,12 +4,12 @@
 # library(kableExtra)
 # library(tidyr)
 
-# dados = read.csv("C:\\Users\\rayss\\Downloads\\0-3.csv", 
+# dados <- read.csv("C:\\Users\\rayss\\Downloads\\0-3.csv", 
 #                   header = TRUE, sep = ",", quote = '"')
 
-carregar_pacotes = function() {
-  pacotes = c("tidyverse", "kableExtra", "readxl", "googledrive", "lubridate")
-  pacotes_nao_instalados = pacotes[!(pacotes %in% installed.packages()[,"Package"])]
+carregar_pacotes <- function() {
+  pacotes <- c("tidyverse", "kableExtra", "readxl", "googledrive", "lubridate")
+  pacotes_nao_instalados <- pacotes[!(pacotes %in% installed.packages()[,"Package"])]
   if(length(pacotes_nao_instalados)) install.packages(pacotes_nao_instalados)
   lapply(pacotes, library, character.only = TRUE)
   cat("Todos os pacotes necessários foram carregados!\n")
@@ -17,20 +17,20 @@ carregar_pacotes = function() {
 
 #carregar_pacotes()
 
-renomear_colunas_padrao = function(dados) {
-  novos_nomes = c(
+renomear_colunas_padrao <- function(dados) {
+  novos_nomes <- c(
     "Competencia", "Cartao", "Nome_Beneficiario", "Data_Nascto", "Idade", "Situacao",
     "Descricao_Item", "Qtde_Itens", "Duracao_sessao", "Nome_Solic", "Espec_Solic"
   )
   if(length(novos_nomes) != ncol(dados)) stop("O número de novos nomes não corresponde ao número de colunas do dataframe.")
-  colnames(dados) = novos_nomes
+  colnames(dados) <- novos_nomes
   return(dados)
 }
 
-# dados = renomear_colunas_padrao(dados)
+# dados <- renomear_colunas_padrao(dados)
 
-preparar_dados = function(dados) {
-  dados = renomear_colunas_padrao(dados)
+preparar_dados <- function(dados) {
+  dados <- renomear_colunas_padrao(dados)
   dados %>%
     mutate(
       idade_meses = (year(Competencia) - year(Data_Nascto)) * 12 +
@@ -54,12 +54,12 @@ preparar_dados = function(dados) {
     ungroup()
 }
 
-# dados = preparar_dados(dados)
+# dados <- preparar_dados(dados)
 
-estatisticas_gerais = function(dados) {
-  n_criancas = n_distinct(dados$Nome_Beneficiario)
-  n_cartoes = n_distinct(dados$Cartao)
-  total_proc = nrow(dados)
+estatisticas_gerais <- function(dados) {
+  n_criancas <- n_distinct(dados$Nome_Beneficiario)
+  n_cartoes <- n_distinct(dados$Cartao)
+  total_proc <- nrow(dados)
   cat("Procedimentos totais:", total_proc, "\n")
   cat("Crianças distintas:", n_criancas, "\n")
   cat("Cartões distintos:", n_cartoes, "\n\n")
@@ -72,7 +72,7 @@ estatisticas_gerais = function(dados) {
 
 # estatisticas_gerais(dados)
 
-graficos_distribuicao = function(dados) {
+graficos_distribuicao <- function(dados) {
   print(
     ggplot(dados, aes(y = janela_dias)) +
       geom_boxplot(fill = "steelblue", color = "black") +
@@ -85,7 +85,7 @@ graficos_distribuicao = function(dados) {
       labs(y = "Janela de tempo (meses)") +
       theme_bw()
   )
-  idades_inicial = dados %>%
+  idades_inicial <- dados %>%
     group_by(Nome_Beneficiario) %>%
     summarise(idade_inicial = min(idade_anos, na.rm = TRUE))
   print(
@@ -94,7 +94,7 @@ graficos_distribuicao = function(dados) {
       labs(x = "Idade inicial (anos)", y = "Frequência") +
       theme_bw()
   )
-  idades_final = dados %>%
+  idades_final <- dados %>%
     group_by(Nome_Beneficiario) %>%
     summarise(idade_final = max(idade_anos, na.rm = TRUE))
   print(
@@ -107,7 +107,7 @@ graficos_distribuicao = function(dados) {
 
 # graficos_distribuicao(dados)
 
-calcular_horas = function(dados) {
+calcular_horas <- function(dados) {
   dados %>%
     mutate(
       duracao_min = case_when(
@@ -119,11 +119,11 @@ calcular_horas = function(dados) {
     )
 }
 
-# dados = calcular_horas(dados)
+# dados <- calcular_horas(dados)
 
-calcular_horas_idade = function(dados) {
+calcular_horas_idade <- function(dados) {
   if (!"horas" %in% names(dados)) {
-    dados = dados %>%
+    dados <- dados %>%
       mutate(
         duracao_min = case_when(
           Duracao_sessao == "30 a 40 minutos" ~ 35,
@@ -136,15 +136,15 @@ calcular_horas_idade = function(dados) {
   return(dados)
 }
 
-# dados = calcular_horas_idade(dados)
+# dados <- calcular_horas_idade(dados)
 
-criar_ano_registro = function(dados, coluna_data) {
+criar_ano_registro <- function(dados, coluna_data) {
   dados %>% mutate(ano_registro = format({{ coluna_data }}, "%Y"))
 }
 
 # criar_ano_registro(dados, Competencia)
 
-tabela_registros_por_ano = function(dados, coluna_ano) {
+tabela_registros_por_ano <- function(dados, coluna_ano) {
   dados %>%
     count({{ coluna_ano }}, sort = TRUE, name = "total_registros") %>%
     kable(caption = "Quantidade de Registros por Ano.")
@@ -152,7 +152,7 @@ tabela_registros_por_ano = function(dados, coluna_ano) {
 
 # tabela_registros_por_ano(dados, ano_registro)
 
-calcular_sessoes_por_ano = function(dados, coluna_ano, coluna_sessoes) {
+calcular_sessoes_por_ano <- function(dados, coluna_ano, coluna_sessoes) {
   dados %>%
     group_by({{ coluna_ano }}) %>%
     summarise(total_sessoes = sum({{ coluna_sessoes }}, na.rm = TRUE)) %>%
@@ -162,8 +162,8 @@ calcular_sessoes_por_ano = function(dados, coluna_ano, coluna_sessoes) {
 
 # calcular_sessoes_por_ano(dados, ano_registro, horas_por_registro)
 
-plotar_sessoes_por_ano = function(dados, coluna_ano, coluna_sessoes) {
-  dados_sum = dados %>%
+plotar_sessoes_por_ano <- function(dados, coluna_ano, coluna_sessoes) {
+  dados_sum <- dados %>%
     group_by({{ coluna_ano }}) %>%
     summarise(total_sessoes = sum({{ coluna_sessoes }}, na.rm = TRUE))
   ggplot(dados_sum, aes(x = as.numeric({{ coluna_ano }}), y = total_sessoes)) +
@@ -175,7 +175,7 @@ plotar_sessoes_por_ano = function(dados, coluna_ano, coluna_sessoes) {
 
 # plotar_sessoes_por_ano(dados, ano_registro, horas_por_registro)
 
-plotar_distribuicao_sessoes = function(dados, coluna_sessoes) {
+plotar_distribuicao_sessoes <- function(dados, coluna_sessoes) {
   dados %>% ggplot(aes(x = {{ coluna_sessoes }})) +
     geom_bar(fill = "steelblue", color = "black") +
     labs(title = "Distribuição da Quantidade de Sessões por Registro", x = "Quantidade de Sessões", y = "Frequência (Contagem de Registros)") +
@@ -184,24 +184,24 @@ plotar_distribuicao_sessoes = function(dados, coluna_sessoes) {
 
 # plotar_distribuicao_sessoes(dados, horas_por_registro)
 
-horas_normalizadas = function(dados) {
-  dados1 = dados %>%
+horas_normalizadas <- function(dados) {
+  dados1 <- dados %>%
     group_by(Nome_Beneficiario, idade_anos) %>%
     mutate(meses_participados_idade = n_distinct(Competencia)) %>%
     ungroup()
   
-  media_p11 = dados1 %>%
+  media_p11 <- dados1 %>%
     group_by(Nome_Beneficiario, Competencia, idade_anos) %>%
     summarise(total_horas_mes = sum(horas_por_registro, na.rm = TRUE),
               peso = max(meses_participados_idade),
               .groups = "drop")
   
-  media_p22 = media_p11 %>%
+  media_p22 <- media_p11 %>%
     group_by(Nome_Beneficiario, idade_anos) %>%
     summarise(media_horas_mensal_paciente = mean(total_horas_mes, na.rm = TRUE),
               peso = max(peso), .groups = "drop")
   
-  media_p33 = media_p22 %>%
+  media_p33 <- media_p22 %>%
     group_by(idade_anos) %>%
     summarise(
       media_geral_horas_mensal_idade = mean(media_horas_mensal_paciente, na.rm = TRUE),
@@ -214,8 +214,8 @@ horas_normalizadas = function(dados) {
 
 # horas_normalizadas(dados)
 
-resumo_por_crianca = function(dados) {
-  proc_por_crianca = dados %>%
+resumo_por_crianca <- function(dados) {
+  proc_por_crianca <- dados %>%
     group_by(Nome_Beneficiario) %>%
     summarise(
       n_procedimentos = n(),
@@ -227,15 +227,15 @@ resumo_por_crianca = function(dados) {
 
 # resumo_por_crianca(dados)
 
-contar_procedimentos = function(dados) {
+contar_procedimentos <- function(dados) {
   dados %>%
     count(Descricao_Item, sort = TRUE)
 }
 
 # contar_procedimentos(dados)
 
-hist_situacao_plano = function(dados) {
-  dados_unicos_recente = dados %>%
+hist_situacao_plano <- function(dados) {
+  dados_unicos_recente <- dados %>%
     group_by(Nome_Beneficiario) %>%
     arrange(desc(idade_anos), desc(Competencia)) %>%
     slice_head(n = 1) %>%
@@ -251,7 +251,7 @@ hist_situacao_plano = function(dados) {
 
 # hist_situacao_plano(dados)
 
-tabela_especialistas = function(dados) {
+tabela_especialistas <- function(dados) {
   dados %>%
     count(Espec_Solic, sort = TRUE) %>%
     kable(caption = "Contagem dos tipos de especialidades solicitantes por registro")
@@ -259,20 +259,20 @@ tabela_especialistas = function(dados) {
 
 # tabela_especialistas(dados)
 
-acoes_judiciais = function(dados) {
-  tabela_contagem = dados %>%
+acoes_judiciais <- function(dados) {
+  tabela_contagem <- dados %>%
     distinct(Nome_Beneficiario, `Acao_Judicial`) %>%
     count(Acao_Judicial) %>%
     kable(caption = "Nº de pacientes que recorreram a Ação Judicial")
   
-  dados_com_acao = dados %>% filter(Acao_Judicial == "SIM")
+  dados_com_acao <- dados %>% filter(Acao_Judicial == "SIM")
   
-  tabela_especialistas = dados_com_acao %>%
+  tabela_especialistas <- dados_com_acao %>%
     distinct(Nome_Beneficiario, Espec_Solic) %>%
     count(Espec_Solic, sort = TRUE) %>%
     kable(caption = "Especialidades mais comuns em Ações Judiciais")
   
-  tabela_procedimentos = dados_com_acao %>%
+  tabela_procedimentos <- dados_com_acao %>%
     distinct(Nome_Beneficiario, Descricao_Item) %>%
     count(Descricao_Item, sort = TRUE) %>%
     kable(caption = "Procedimentos mais comuns em Ações Judiciais")
@@ -286,9 +286,9 @@ acoes_judiciais = function(dados) {
 
 # acoes_judiciais(dados)
 
-estatisticas_gerais_final = function(dados) {
-  n_criancas = n_distinct(dados$Nome_Beneficiario)
-  n_cartoes = n_distinct(dados$Cartao)
+estatisticas_gerais_final <- function(dados) {
+  n_criancas <- n_distinct(dados$Nome_Beneficiario)
+  n_cartoes <- n_distinct(dados$Cartao)
   
   cat("Procedimentos totais:", nrow(dados), "\n")
   cat("Crianças distintas:", n_criancas, "\n")
@@ -309,7 +309,7 @@ estatisticas_gerais_final = function(dados) {
 
 # estatisticas_gerais_final(dados)
 
-tabela_horas_extremos = function(dados) {
+tabela_horas_extremos <- function(dados) {
   dados %>%
     distinct(Nome_Beneficiario, idade_anos, .keep_all = TRUE) %>%
     group_by(Nome_Beneficiario) %>%
@@ -326,18 +326,18 @@ tabela_horas_extremos = function(dados) {
 
 # tabela_horas_extremos(dados)
 
-graficos_evolucao_horas = function(dados) {
-  dados_grafico = dados %>%
+graficos_evolucao_horas <- function(dados) {
+  dados_grafico <- dados %>%
     distinct(idade_anos, .keep_all = TRUE) %>%
     select(idade_anos, media_geral_horas_mensal_idade, media_ponderada_horas_mensal_idade)
   
-  g_media = ggplot(dados_grafico, aes(x = idade_anos, y = media_geral_horas_mensal_idade)) +
+  g_media <- ggplot(dados_grafico, aes(x = idade_anos, y = media_geral_horas_mensal_idade)) +
     geom_line(color = "steelblue", size = 1.2) +
     geom_point(color = "steelblue") +
     labs(x = "Idade (anos)", y = "Média de horas mensais") +
     theme_bw()
   
-  g_media_ponderada = ggplot(dados_grafico, aes(x = idade_anos, y = media_ponderada_horas_mensal_idade)) +
+  g_media_ponderada <- ggplot(dados_grafico, aes(x = idade_anos, y = media_ponderada_horas_mensal_idade)) +
     geom_line(color = "darkred", size = 1.2) +
     geom_point(color = "darkred") +
     labs(x = "Idade (anos)", y = "Média ponderada de horas mensais") +
@@ -351,7 +351,7 @@ graficos_evolucao_horas = function(dados) {
 
 # graficos_evolucao_horas(dados)
 
-grafico_diferenca_horas = function(dados) {
+grafico_diferenca_horas <- function(dados) {
   dados %>%
     distinct(Nome_Beneficiario, idade_anos, .keep_all = TRUE) %>%
     group_by(Nome_Beneficiario) %>%
@@ -373,8 +373,8 @@ grafico_diferenca_horas = function(dados) {
 
 # grafico_diferenca_horas(dados)
 
-cor_idade_horas = function(dados) {
-  grafico_dispersao = dados %>%
+cor_idade_horas <- function(dados) {
+  grafico_dispersao <- dados %>%
     ggplot(aes(x = idade_anos, y = media_horas_mensal_paciente)) +
     geom_point(alpha = 0.6, color = "steelblue") +
     geom_smooth(method = "lm", se = TRUE, color = "darkred") +
@@ -382,7 +382,7 @@ cor_idade_horas = function(dados) {
          x = "Idade (anos)", y = "Horas totais de atendimento") +
     theme_bw()
   
-  teste_cor = cor.test(dados$idade_anos, dados$media_horas_mensal_paciente, method = "spearman")
+  teste_cor <- cor.test(dados$idade_anos, dados$media_horas_mensal_paciente, method = "spearman")
   
   cat("--- Resultado do Teste de Correlação de Spearman ---\n")
   print(teste_cor)

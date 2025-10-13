@@ -5,12 +5,12 @@ source("funções.R")
 
 # Carregar módulos
 source("modules/mod_bianca.R")
-source("modules/mod_caua.R")
+source("modules/mod_cauã.R")
 source("modules/mod_gabrielle.R")
 source("modules/mod_lucas.R")
 source("modules/mod_rayssa.R")
 
-ui <- navbarPage(
+ui = navbarPage(
   "Consultoria",
   
   # Painel inicial para upload do banco
@@ -36,10 +36,10 @@ ui <- navbarPage(
   tabPanel("Rayssa", mod_rayssa_ui("rayssa"))
 )
 
-server <- function(input, output, session) {
+server = function(input, output, session) {
   
   # Reactive para armazenar o banco carregado
-  dados <- reactive({
+  dados = reactive({
     req(input$file)
     read.csv(input$file$datapath, 
              header = input$header, 
@@ -48,7 +48,7 @@ server <- function(input, output, session) {
   })
   
   # Preview do banco
-  output$preview <- renderTable({
+  output$preview = renderTable({
     req(dados())
     head(dados())
   })
