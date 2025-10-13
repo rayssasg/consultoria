@@ -1,6 +1,6 @@
 # módulo UI
-mod_rayssa_ui = function(id) {
-  ns = NS(id)
+mod_rayssa_ui <- function(id) {
+  ns <- NS(id)
   
   fluidPage(
     h3("Testando"),
@@ -11,6 +11,8 @@ mod_rayssa_ui = function(id) {
     # Controle de bins para histogramas
     sidebarLayout(
       sidebarPanel(
+        sliderInput(ns("bins_janela_dias"), "Bins - Janela (dias)", min = 1, max = 20, value = 5),
+        sliderInput(ns("bins_janela_meses"), "Bins - Janela (meses)", min = 1, max = 20, value = 5),
         sliderInput(ns("bins_inicial"), "Bins - Idade Inicial", min = 1, max = 20, value = 5),
         sliderInput(ns("bins_final"), "Bins - Idade Final", min = 1, max = 20, value = 5)
       ),
@@ -29,51 +31,51 @@ mod_rayssa_ui = function(id) {
 }
 
 # módulo server
-mod_rayssa_server = function(id, dados) {
+mod_rayssa_server <- function(id, dados) {
   moduleServer(id, function(input, output, session) {
     
     # Limpar e preparar dados
-    dados_processados = reactive({
+    dados_processados <- reactive({
       req(dados())
-      d = dados()
-      d = preparar_dados(d)
+      d <- dados()
+      d <- preparar_dados(d)
       d
     })
     
     # Tabela de estatísticas gerais
-    output$tabela_resumo = renderTable({
+    output$tabela_resumo <- renderTable({
       req(dados_processados())
       
-      dados = estatisticas_gerais(dados_processados())
+      df <- estatisticas_gerais(dados_processados())
       
       # definir os nomes bonitos
-      colnames(dados) = c("Total de Procedimentos", "Crianças Distintas", "Cartões Distintos")
+      colnames(df) <- c("Total de Procedimentos", "Crianças Distintas", "Cartões Distintos")
       
-      dados
+      df
     }, striped = TRUE, hover = TRUE, bordered = TRUE)
     
-    # Boxplot da janela em dias
-    output$grafico_janela_dias = renderPlot({
+    # Histograma da janela em dias
+    output$grafico_janela_dias <- renderPlot({
       req(dados_processados())
-      ggplot(dados_processados(), aes(y = as.numeric(janela_dias))) +
-        geom_boxplot(fill = "steelblue", color = "black") +
-        labs(y = "Janela de tempo (dias)", title = "Janela de tempo (dias)") +
+      ggplot(dados_processados(), aes(x = janela_dias)) +
+        geom_histogram(bins = input$bins_janela_dias, fill = "steelblue", color = "black") +
+        labs(x = "Janela de tempo (dias)", y = "Frequência", title = "Distribuição da janela de tempo (dias)") +
         theme_bw()
     })
     
-    # Boxplot da janela em meses
-    output$grafico_janela_meses = renderPlot({
+    # Histograma da janela em meses
+    output$grafico_janela_meses <- renderPlot({
       req(dados_processados())
-      ggplot(dados_processados(), aes(y = janela_meses)) +
-        geom_boxplot(fill = "steelblue", color = "black") +
-        labs(y = "Janela de tempo (meses)", title = "Janela de tempo (meses)") +
+      ggplot(dados_processados(), aes(x = janela_meses)) +
+        geom_histogram(bins = input$bins_janela_meses, fill = "steelblue", color = "black") +
+        labs(x = "Janela de tempo (meses)", y = "Frequência", title = "Distribuição da janela de tempo (meses)") +
         theme_bw()
     })
     
     # Histograma da idade inicial (bins ajustáveis)
-    output$hist_idade_inicial = renderPlot({
+    output$hist_idade_inicial <- renderPlot({
       req(dados_processados())
-      idades_inicial = dados_processados() %>%
+      idades_inicial <- dados_processados() %>%
         group_by(`Nome_Beneficiario`) %>%
         summarise(idade_inicial = min(idade_anos, na.rm = TRUE))
       
@@ -84,9 +86,9 @@ mod_rayssa_server = function(id, dados) {
     })
     
     # Histograma da idade final (bins ajustáveis)
-    output$hist_idade_final = renderPlot({
+    output$hist_idade_final <- renderPlot({
       req(dados_processados())
-      idades_final = dados_processados() %>%
+      idades_final <- dados_processados() %>%
         group_by(`Nome_Beneficiario`) %>%
         summarise(idade_final = max(idade_anos, na.rm = TRUE))
       

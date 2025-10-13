@@ -73,36 +73,43 @@ estatisticas_gerais = function(dados) {
 # estatisticas_gerais(dados)
 
 graficos_distribuicao = function(dados) {
-  print(
-    ggplot(dados, aes(y = janela_dias)) +
-      geom_boxplot(fill = "steelblue", color = "black") +
-      labs(y = "Janela de tempo (dias)", title = "Distribuição da janela de tempo") +
+  
+    print(
+    ggplot(dados, aes(x = janela_dias)) +
+      geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
+      labs(x = "Janela de tempo (dias)", y = "Frequência", title = "Distribuição da janela de tempo (dias)") +
       theme_bw()
   )
+  
   print(
-    ggplot(dados, aes(y = janela_meses)) +
-      geom_boxplot(fill = "steelblue", color = "black") +
-      labs(y = "Janela de tempo (meses)") +
+    ggplot(dados, aes(x = janela_meses)) +
+      geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
+      labs(x = "Janela de tempo (meses)", y = "Frequência", title = "Distribuição da janela de tempo (meses)") +
       theme_bw()
   )
+  
   idades_inicial = dados %>%
     group_by(Nome_Beneficiario) %>%
     summarise(idade_inicial = min(idade_anos, na.rm = TRUE))
+  
   print(
     ggplot(idades_inicial, aes(x = idade_inicial)) +
       geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
-      labs(x = "Idade inicial (anos)", y = "Frequência") +
+      labs(x = "Idade inicial (anos)", y = "Frequência", title = "Distribuição da idade inicial") +
       theme_bw()
   )
+  
   idades_final = dados %>%
     group_by(Nome_Beneficiario) %>%
     summarise(idade_final = max(idade_anos, na.rm = TRUE))
+  
   print(
     ggplot(idades_final, aes(x = idade_final)) +
       geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
-      labs(x = "Idade final (anos)", y = "Frequência") +
+      labs(x = "Idade final (anos)", y = "Frequência", title = "Distribuição da idade final") +
       theme_bw()
   )
+  
 }
 
 # graficos_distribuicao(dados)
