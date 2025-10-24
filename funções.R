@@ -1,8 +1,8 @@
-# library(dplyr)
-# library(lubridate)
-# library(ggplot2)
-# library(kableExtra)
-# library(tidyr)
+ library(dplyr)
+ library(lubridate)
+ library(ggplot2)
+ library(kableExtra)
+ library(tidyr)
 
 # dados = read.csv("C:\\Users\\rayss\\Downloads\\0-3.csv", 
 #                   header = TRUE, sep = ",", quote = '"')
@@ -20,23 +20,44 @@ carregar_pacotes = function() {
 renomear_colunas_padrao = function(dados) {
   novos_nomes = c(
     "Competencia", "Cartao", "Nome_Beneficiario", "Data_Nascto", "Idade", "Situacao",
-    "Descricao_Item", "Qtde_Itens", "Duracao_sessao", "Nome_Solic", "Espec_Solic"
+    "Descricao_Item", "Qtde_Itens", "Duracao_sessao", "Nome_Solic", "Espec_Solic",
+    "Dia_Atend", "Acao_Judicial"
   )
-  if(length(novos_nomes) != ncol(dados)) stop("O número de novos nomes não corresponde ao número de colunas do dataframe.")
-  colnames(dados) = novos_nomes
+  
+  # Verifica o número de colunas
+  num_colunas_dados = ncol(dados)
+  num_novos_nomes = length(novos_nomes)
+  
+  # Se os números forem diferentes, avisa no console em vez de parar o app
+  if (num_colunas_dados != num_novos_nomes) {
+    warning(paste("AVISO: O arquivo CSV tem", num_colunas_dados, 
+                  "colunas, mas a função de renomear esperava", num_novos_nomes, 
+                  "nomes. Verifique o arquivo de origem."))
+  }
+  
+  # Renomeia apenas o número de colunas que existem
+  # Isso evita o erro e permite que o app continue rodando para depuração
+  nomes_para_usar <- novos_nomes[1:min(num_colunas_dados, num_novos_nomes)]
+  names(dados)[1:length(nomes_para_usar)] <- nomes_para_usar
+  
   return(dados)
 }
 
 # dados = renomear_colunas_padrao(dados)
 
+# VERSÃO CORRIGIDA 
 preparar_dados = function(dados) {
   dados = renomear_colunas_padrao(dados)
   dados %>%
-    mutate(
-      idade_meses = (year(Competencia) - year(Data_Nascto)) * 12 +
-        (month(Competencia) - month(Data_Nascto)) - (day(Competencia) < day(Data_Nascto)),
-      idade_anos = idade_meses %/% 12
-    ) %>%
+  mutate(
+    Competencia = ymd(Competencia),
+    Data_Nascto = ymd(Data_Nascto)
+  ) %>%
+  mutate(
+    idade_meses = (year(Competencia) - year(Data_Nascto)) * 12 +
+      (month(Competencia) - month(Data_Nascto)) - (day(Competencia) < day(Data_Nascto)),
+    idade_anos = idade_meses %/% 12
+  ) %>%
     filter(idade_anos < 18) %>%
     group_by(Nome_Beneficiario) %>%
     mutate(
@@ -402,3 +423,66 @@ cor_idade_horas = function(dados) {
 }
 
 # cor_idade_horas(dados)
+
+#NOVAS FUNÇÕES
+#versões que retornam data.frame, não kable 
+
+tabela_registros_por_ano_df = function(dados, coluna_ano) {
+  dados %>%
+    count({{ coluna_ano }}, sort = TRUE, name = "total_registros")
+}
+
+acoes_judiciais_dfs = function(dados) {
+  tab_contagem = dados %>%
+    distinct(Nome_Beneficiario, Acao_Judicial) %>%
+    count(Acao_Judicial, name = "n_pacientes")
+  
+  dados_com_acao = dados %>% filter(Acao_Judicial == "SIM")
+  
+  tab_especialistas = dados_com_acao %>%
+    distinct(Nome_Beneficiario, Espec_Solic) %>%
+    count(Espec_Solic, sort = TRUE, name = "n_casos")
+  
+  tab_procedimentos = dados_com_acao %>%
+    distinct(Nome_Beneficiario, Descricao_Item) %>%
+    count(Descricao_Item, sort = TRUE, name = "n_casos")
+  
+  list(
+    contagem = tab_contagem,
+    especialistas = tab_especialistas,
+    procedimentos = tab_procedimentos
+  )
+}
+
+#sumario vetores
+vec_summary_table = function(x) {
+  s = summary(x)
+  data.frame(
+    estatistica = names(s),
+    valor = unname(s),
+    row.names = NULL,
+    check.names = FALSE
+  )
+}
+
+# nível "por criança e idade" para análises de idade
+# esta é "a etapa 2" da horas_normalizadas() (o seu media_p22)
+horas_normalizadas_nivel_crianca = function(dados) {
+  dados1 = dados %>%
+    group_by(Nome_Beneficiario, idade_anos) %>%
+    mutate(meses_participados_idade = n_distinct(Competencia)) %>%
+    ungroup()
+  
+  media_p11 = dados1 %>%
+    group_by(Nome_Beneficiario, Competencia, idade_anos) %>%
+    summarise(total_horas_mes = sum(horas_por_registro, na.rm = TRUE),
+              peso = max(meses_participados_idade),
+              .groups = "drop")
+  
+  media_p22 = media_p11 %>%
+    group_by(Nome_Beneficiario, idade_anos) %>%
+    summarise(media_horas_mensal_paciente = mean(total_horas_mes, na.rm = TRUE),
+              peso = max(peso), .groups = "drop")
+  
+  media_p22
+}
