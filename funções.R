@@ -1,8 +1,8 @@
- library(dplyr)
- library(lubridate)
- library(ggplot2)
- library(kableExtra)
- library(tidyr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(kableExtra)
+library(tidyr)
 
 # dados = read.csv("C:\\Users\\rayss\\Downloads\\0-3.csv", 
 #                   header = TRUE, sep = ",", quote = '"')
@@ -49,15 +49,15 @@ renomear_colunas_padrao = function(dados) {
 preparar_dados = function(dados) {
   dados = renomear_colunas_padrao(dados)
   dados %>%
-  mutate(
-    Competencia = ymd(Competencia),
-    Data_Nascto = ymd(Data_Nascto)
-  ) %>%
-  mutate(
-    idade_meses = (year(Competencia) - year(Data_Nascto)) * 12 +
-      (month(Competencia) - month(Data_Nascto)) - (day(Competencia) < day(Data_Nascto)),
-    idade_anos = idade_meses %/% 12
-  ) %>%
+    mutate(
+      Competencia = ymd(Competencia),
+      Data_Nascto = ymd(Data_Nascto)
+    ) %>%
+    mutate(
+      idade_meses = (year(Competencia) - year(Data_Nascto)) * 12 +
+        (month(Competencia) - month(Data_Nascto)) - (day(Competencia) < day(Data_Nascto)),
+      idade_anos = idade_meses %/% 12
+    ) %>%
     filter(idade_anos < 18) %>%
     group_by(Nome_Beneficiario) %>%
     mutate(
@@ -95,7 +95,7 @@ estatisticas_gerais = function(dados) {
 
 graficos_distribuicao = function(dados) {
   
-    print(
+  print(
     ggplot(dados, aes(x = janela_dias)) +
       geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
       labs(x = "Janela de tempo (dias)", y = "Frequência", title = "Distribuição da janela de tempo (dias)") +
