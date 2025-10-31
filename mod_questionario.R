@@ -119,13 +119,12 @@ mod_questionario_server <- function(id){
       updateSelectInput(session, "var_cat", choices = choices, selected = default_var)
     })
     
-    # --- 3. Tabela de Frequência (COM "Sem resposta") ---
+    # --- 3. Tabela de Frequência (SEM "Sem resposta") ---
     output$tabela_frequencia <- renderDT({
       req(dados_quest_raw(), input$var_cat)
       
       df_freq <- dados_quest_raw() %>%
         mutate(!!sym(input$var_cat) := as.character(!!sym(input$var_cat))) %>%
-        mutate(!!sym(input$var_cat) := replace_na(!!sym(input$var_cat), "Sem resposta")) %>%
         count(!!sym(input$var_cat), sort = TRUE, name = "Frequencia") %>%
         mutate(Percentual = round(Frequencia / sum(Frequencia) * 100, 2)) %>%
         rename(Resposta = !!sym(input$var_cat))
@@ -144,12 +143,12 @@ mod_questionario_server <- function(id){
       )
     })
     
-    # --- 4. Preview dos dados (COM "Sem resposta") ---
+    # --- 4. Preview dos dados (SEM "Sem resposta") ---
     output$dados_quest_preview <- renderDT({
       req(dados_quest_raw())
       
-      df_preview <- dados_quest_raw() %>%
-        mutate(across(everything(), ~as.character(replace_na(., "Sem resposta"))))
+      
+      df_preview <- dados_quest_raw()
       
       datatable(df_preview, options = list(pageLength = 5, scrollX = TRUE))
     })
