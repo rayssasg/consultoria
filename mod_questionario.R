@@ -88,13 +88,12 @@ mod_questionario_server <- function(id){
           stop("Formato de arquivo não suportado.")
         }
         
-        # --- ALTERAÇÃO REVERTIDA ---
-        # Não filtra mais colunas, usa todos os nomes originais
+       
         nomes_originais_filtrados <- names(df_raw) 
         
         # Cria o dataframe com nomes limpos
         df_clean <- janitor::clean_names(df_raw)
-        # --- FIM DA ALTERAÇÃO ---
+        
         
         nomes_limpos <- names(df_clean)
         select_choices <- setNames(nomes_limpos, nomes_originais_filtrados)
@@ -119,7 +118,7 @@ mod_questionario_server <- function(id){
       updateSelectInput(session, "var_cat", choices = choices, selected = default_var)
     })
     
-    # --- 3. Tabela de Frequência (SEM "Sem resposta") ---
+    # --- 3. Tabela de Frequência  ---
     output$tabela_frequencia <- renderDT({
       req(dados_quest_raw(), input$var_cat)
       
@@ -143,7 +142,7 @@ mod_questionario_server <- function(id){
       )
     })
     
-    # --- 4. Preview dos dados (SEM "Sem resposta") ---
+    # --- 4. Preview dos dados ---
     output$dados_quest_preview <- renderDT({
       req(dados_quest_raw())
       
