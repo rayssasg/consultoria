@@ -7,6 +7,8 @@ library(fontawesome)
 library(DT)
 library(dplyr)
 library(lubridate)
+library(readr)     
+library(forcats)
 
 # Tema elegante
 tema_consultoria <- bs_theme(
@@ -30,6 +32,7 @@ source("modules/mod_beneficiario.R")
 source("modules/mod_idade.R")
 source("modules/mod_tempo_participacao.R")
 source("modules/mod_horas_atendimento.R")
+source("modules/mod_questionario.R")
 
 # ---- UI ----
 ui <- page_navbar(
@@ -64,7 +67,8 @@ ui <- page_navbar(
   nav_panel(" Beneficiário", mod_beneficiario_ui("bf")),
   nav_panel(" Idade", mod_idade_ui("id")),
   nav_panel(" Tempo Participação", mod_tempo_participacao_ui("tp")),
-  nav_panel("Horas Atendimento", mod_horas_atendimento_ui("ha"))
+  nav_panel("Horas Atendimento", mod_horas_atendimento_ui("ha")),
+  nav_panel("Questionário Famílias", mod_questionario_ui("quest"))
 )
 
 # ---- Server ----
@@ -100,6 +104,8 @@ server <- function(input, output, session) {
   mod_idade_server("id", dados)
   mod_tempo_participacao_server("tp", dados)
   mod_horas_atendimento_server("ha", dados)
+  
+  mod_questionario_server("quest")
 }
 
 shinyApp(ui, server)
