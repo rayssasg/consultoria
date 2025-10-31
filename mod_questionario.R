@@ -42,7 +42,7 @@ mod_questionario_ui <- function(id){
             
             selectInput(ns("var_cat"), "Selecione a pergunta:", choices = NULL),
             
-            p("Selecione uma variável para ver sua tabela de frequência.")
+            p("Selecione uma pergunta para ver sua tabela de frequência.")
           ),
           mainPanel(
             width = 9,
@@ -50,7 +50,7 @@ mod_questionario_ui <- function(id){
               tabPanel(
                 "Tabela de Frequência",
                 br(),
-                p("Esta tabela mostra a contagem e o percentual de cada resposta para a variável selecionada."),
+                p("Esta tabela mostra a contagem e o percentual de cada resposta para a pergunta selecionada."),
                 DTOutput(ns("tabela_frequencia"))
               ),
               tabPanel(
