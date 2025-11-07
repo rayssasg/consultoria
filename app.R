@@ -9,6 +9,8 @@ library(dplyr)
 library(lubridate)
 library(readr)     
 library(forcats)
+library(tidyverse)
+library(rlang)
 
 # Tema elegante
 tema_consultoria <- bs_theme(
@@ -26,13 +28,13 @@ bs_add_rules(tema_consultoria, "body { background-color: #f9fafc; }")
 
 # Carregar funções e módulos
 source("funções.R")
-source("modules/mod_analise_geral.R")
-source("modules/mod_registros_sessoes.R")
-source("modules/mod_beneficiario.R")
-source("modules/mod_idade.R")
-source("modules/mod_tempo_participacao.R")
-source("modules/mod_horas_atendimento.R")
-source("modules/mod_questionario.R")
+source("mod_analise_geral.R")
+source("mod_registros_sessoes.R")
+source("mod_beneficiario.R")
+source("mod_idade.R")
+source("mod_tempo_participacao.R")
+source("mod_horas_atendimento.R")
+source("mod_questionario.R")
 
 # ---- UI ----
 ui <- page_navbar(
