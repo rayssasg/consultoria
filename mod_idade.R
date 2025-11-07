@@ -150,7 +150,7 @@ mod_idade_server <- function(id, dados) {
     output$plot_densidade_idade <- renderPlot({
       df <- dados_prep()
       ggplot(df, aes(x = idade_anos)) +
-        geom_density(fill = "#18BC9C", alpha = 0.6, color = "#1E2A5E") +
+        geom_histogram(fill = "#18BC9C", alpha = 0.6, color = "#1E2A5E") +
         labs(
           x = "Idade (anos)",
           y = "Densidade",

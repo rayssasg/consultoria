@@ -30,19 +30,19 @@ source("mod_beneficiario.R")
 source("mod_idade.R")
 source("mod_tempo_participacao.R")
 source("mod_horas_atendimento.R")
+source("mod_questionario.R")
 
 # ---- UI ----
 ui <- page_navbar(
   theme = tema_consultoria,
   title = div(icon("chart-line"), "Consultoria - Análise de Dados"),
-  
   nav_panel("Carregar Dados",
             layout_columns(
               col_widths = c(4, 8),
               card(
                 card_header("Upload do Arquivo"),
                 card_body(
-                  fileInput("file", "Escolha um arquivo CSV", accept = ".csv"),
+                  fileInput("file", "Escolha um arquivo CSV", accept = ".csv", buttonLabel = "Procurar..."),
                   checkboxInput("header", "Cabeçalho", TRUE),
                   selectInput("sep", "Separador", choices = c("," = ",", ";" = ";")),
                   selectInput("quote", "Aspas", choices = c("Nenhuma" = "", "Dupla" = '"', "Simples" = "'")),
@@ -58,13 +58,13 @@ ui <- page_navbar(
               )
             )
   ),
-  
   nav_panel("Análise Geral", mod_analise_geral_ui("ag")),
   nav_panel(" Registros e Sessões", mod_registros_sessoes_ui("rs")),
   nav_panel(" Beneficiário", mod_beneficiario_ui("bf")),
   nav_panel(" Idade", mod_idade_ui("id")),
   nav_panel(" Tempo Participação", mod_tempo_participacao_ui("tp")),
-  nav_panel("Horas Atendimento", mod_horas_atendimento_ui("ha"))
+  nav_panel("Horas Atendimento", mod_horas_atendimento_ui("ha")),
+  nav_panel("Questionário Famílias", mod_questionario_ui("quest"))
 )
 
 # ---- Server ----
@@ -100,6 +100,7 @@ server <- function(input, output, session) {
   mod_idade_server("id", dados)
   mod_tempo_participacao_server("tp", dados)
   mod_horas_atendimento_server("ha", dados)
+  mod_questionario_server("quest")
 }
 
 shinyApp(ui, server)

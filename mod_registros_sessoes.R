@@ -227,7 +227,7 @@ mod_registros_sessoes_server <- function(id, dados){
     # Tabela de registros por ano
     output$tab_registros_ano <- DT::renderDT({
       df <- tabela_registros_por_ano_df(dados_prep(), ano_registro) %>%
-        rename(Ano = ano_registro, `Total de Registros` = total_registros)
+        rename(Ano = ano_registro, `Total de Registros` = total_registros) %>% arrange(Ano)
       
       DT::datatable(
         df,
