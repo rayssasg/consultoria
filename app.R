@@ -42,7 +42,7 @@ ui <- page_navbar(
               card(
                 card_header("Upload do Arquivo"),
                 card_body(
-                  fileInput("file", "Escolha um arquivo CSV", accept = ".csv", buttonLabel = "Procurar..."),
+                  fileInput("file", "Escolha um arquivo CSV", accept = c(".csv", ".xlsx", ".xls"), buttonLabel = "Procurar..."),
                   checkboxInput("header", "Cabeçalho", TRUE),
                   selectInput("sep", "Separador", choices = c("," = ",", ";" = ";")),
                   selectInput("quote", "Aspas", choices = c("Nenhuma" = "", "Dupla" = '"', "Simples" = "'")),

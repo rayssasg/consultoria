@@ -24,7 +24,7 @@ mod_idade_ui <- function(id) {
             fluidRow(
               column(6,
                      card(
-                       card_header("Distribuição de Idades"),
+                       card_header("Distribuição das Idades"),
                        plotOutput(ns("plot_idade"), height = "500px")
                      )
               ),
@@ -35,7 +35,7 @@ mod_idade_ui <- function(id) {
               )
           )),
           tabPanel(
-            "Análise Detalhada", 
+            "Idade por ano", 
             fluidRow(
               column(6,
                      card(
@@ -53,7 +53,7 @@ mod_idade_ui <- function(id) {
           ),
           
           tabPanel(
-            "Dados Completos",
+            "Informações Detalhadas",
             card(
               card_header("Tabela de Frequência de Idades"),
               DT::DTOutput(ns("tab_frequencia_idade"))

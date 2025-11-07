@@ -56,7 +56,7 @@ mod_beneficiario_ui <- function(id){
           ),
           
           tabPanel(
-            "Ações Judiciais",
+            "Mais Detalhes",
             fluidRow(
               column(4,
                      card(

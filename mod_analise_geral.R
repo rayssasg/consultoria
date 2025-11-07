@@ -18,34 +18,14 @@ mod_analise_geral_ui <- function(id){
           type = "tabs",
           
           tabPanel(
-            " Resumo Estatístico",
-            card(
-              card_header("Estatísticas Gerais do Dataset"),
-              DT::DTOutput(ns("tabela_resumo"))
+            "Resumo Estatístico",
+            fluidRow(
+              card(
+                card_header("Estatísticas Gerais do Dataset"),
+                DT::DTOutput(ns("tabela_resumo"))
+              )
             ),
             fluidRow(
-              column(6,
-                     card(
-                       card_header("Distribuição da Janela de Tempo (Dias)"),
-                       plotOutput(ns("plot_janela_dias"), height = "400px")
-                     )
-              ),
-              column(6,
-                     card(
-                       card_header("Distribuição da Janela de Tempo (Meses)"),
-                       plotOutput(ns("plot_janela_meses"), height = "400px")
-                     )
-              )
-            )
-          ),
-          
-          tabPanel(
-            "Visualizações",
-            fluidRow(
-              column(6,
-                     card(
-                       card_header("Distribuição do Número de Registros"),
-                       plotOutput(ns("plot_numero_registros"), height = "450px"))),
               column(6,
                      card(
                        card_header("Estatísticas Descritivas Detalhadas"),
@@ -53,8 +33,7 @@ mod_analise_geral_ui <- function(id){
                      )),
               )
             )
-          )
-      ),
+          )),
       card_footer("Visão geral e estatísticas descritivas do dataset completo")
     )
   )
@@ -79,74 +58,6 @@ mod_analise_geral_server <- function(id, dados){
         rownames = FALSE,
         options = list(dom = 't')
       )
-    })
-    
-    output$plot_janela_dias <- renderPlot({
-      df <- dados_prep()
-      ggplot(df, aes(x = janela_dias)) +
-        geom_histogram(bins = 30, fill = "#1E2A5E", alpha = 0.8, color = "white") +
-        labs(
-          title = "Distribuição da Janela de Tempo (Dias)",
-          x = "Janela de Tempo (dias)", 
-          y = "Frequência"
-        ) +
-        theme_minimal() +
-        theme(
-          plot.title = element_text(face = "bold", hjust = 0.5, size = 16),
-          axis.text = element_text(size = 12),
-          axis.title = element_text(size = 14)
-        )
-    })
-    
-    output$plot_janela_meses <- renderPlot({
-      df <- dados_prep()
-      ggplot(df, aes(x = janela_meses)) +
-        geom_histogram(bins = 30, fill = "#18BC9C", alpha = 0.8, color = "white") +
-        labs(
-          title = "Distribuição da Janela de Tempo (Meses)",
-          x = "Janela de Tempo (meses)", 
-          y = "Frequência"
-        ) +
-        theme_minimal() +
-        theme(
-          plot.title = element_text(face = "bold", hjust = 0.5, size = 16),
-          axis.text = element_text(size = 12),
-          axis.title = element_text(size = 14)
-        )
-    })
-    
-    output$plot_meses_participados <- renderPlot({
-      df <- dados_prep()
-      ggplot(df, aes(x = meses_participados)) +
-        geom_histogram(bins = 20, fill = "#5DADE2", alpha = 0.8, color = "white") +
-        labs(
-          title = "Distribuição de Meses Participados",
-          x = "Meses Participados", 
-          y = "Frequência"
-        ) +
-        theme_minimal() +
-        theme(
-          plot.title = element_text(face = "bold", hjust = 0.5, size = 16),
-          axis.text = element_text(size = 12),
-          axis.title = element_text(size = 14)
-        )
-    })
-    
-    output$plot_numero_registros <- renderPlot({
-      df <- dados_prep()
-      ggplot(df, aes(x = numero_registros)) +
-        geom_histogram(bins = 20, fill = "#1E2A5E", alpha = 0.8, color = "white") +
-        labs(
-          title = "Distribuição do Número de Registros",
-          x = "Número de Registros", 
-          y = "Frequência"
-        ) +
-        theme_minimal() +
-        theme(
-          plot.title = element_text(face = "bold", hjust = 0.5, size = 16),
-          axis.text = element_text(size = 12),
-          axis.title = element_text(size = 14)
-        )
     })
     
     output$tab_estatisticas_detalhadas <- DT::renderDT({

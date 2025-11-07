@@ -62,32 +62,13 @@ meses distintos")
               )
             )
           ),
-          
-          tabPanel(
-            " Análise Detalhada",
-            fluidRow(
-              column(6,
-                     card(
-                       card_header("Distribuição de Meses Participados"),
-                       plotOutput(ns("plot_meses_participados"), height = "450px")
-                     )
-              ),
-              column(6,
-                     card(
-                       card_header("Distribuição do Número de Registros"),
-                       plotOutput(ns("plot_numero_registros"), height = "450px")
-                     )
-              )
-            )
-          ),
-          
           tabPanel(
             "Estatísticas",
             fluidRow(
               column(6,
                      card(
-                       card_header("Estatísticas - Meses Participados"),
-                       DT::DTOutput(ns("tab_meses_participados"))
+                       card_header("Distribuição do Número de Registros"),
+                       plotOutput(ns("plot_numero_registros"), height = "450px")
                      )
               ),
               column(6,
