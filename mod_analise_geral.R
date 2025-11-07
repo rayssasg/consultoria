@@ -6,7 +6,6 @@ library(bslib)
 
 mod_analise_geral_ui <- function(id){
   ns <- NS(id)
-  
   tagList(
     card(
       card_header(
@@ -45,27 +44,16 @@ mod_analise_geral_ui <- function(id){
             fluidRow(
               column(6,
                      card(
-                       card_header("Distribuição de Meses Participados"),
-                       plotOutput(ns("plot_meses_participados"), height = "450px")
-                     )
-              ),
+                       card_header("Distribuição do Número de Registros"),
+                       plotOutput(ns("plot_numero_registros"), height = "450px"))),
               column(6,
                      card(
-                       card_header("Distribuição do Número de Registros"),
-                       plotOutput(ns("plot_numero_registros"), height = "450px")
-                     )
+                       card_header("Estatísticas Descritivas Detalhadas"),
+                       DT::DTOutput(ns("tab_estatisticas_detalhadas"))
+                     )),
               )
             )
-          ),
-          
-          tabPanel(
-            "Dados Completos",
-            card(
-              card_header("Estatísticas Descritivas Detalhadas"),
-              DT::DTOutput(ns("tab_estatisticas_detalhadas"))
-            )
           )
-        )
       ),
       card_footer("Visão geral e estatísticas descritivas do dataset completo")
     )

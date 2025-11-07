@@ -30,21 +30,10 @@ mod_idade_ui <- function(id) {
               ),
               column(6,
                      card(
-                       card_header("Evolução da Idade Média por Ano"),
-                       plotOutput(ns("plot_media_ano"), height = "500px")
-                     )
-              )
-            ),
-            fluidRow(
-              column(12,
-                     card(
                        card_header("Estatísticas Descritivas"),
-                       DT::DTOutput(ns("tab_estatisticas"))
-                     )
+                       DT::DTOutput(ns("tab_estatisticas")))
               )
-            )
-          ),
-          
+          )),
           tabPanel(
             "Análise Detalhada", 
             fluidRow(
@@ -56,8 +45,8 @@ mod_idade_ui <- function(id) {
               ),
               column(6,
                      card(
-                       card_header("Densidade de Idades"),
-                       plotOutput(ns("plot_densidade_idade"), height = "550px")
+                       card_header("Evolução da Idade Média por Ano"),
+                       plotOutput(ns("plot_media_ano"), height = "500px")
                      )
               )
             )
@@ -89,7 +78,7 @@ mod_idade_server <- function(id, dados) {
     output$plot_idade <- renderPlot({
       df <- dados_prep()
       ggplot(df, aes(x = idade_anos)) +
-        geom_histogram(bins = 20, fill = "#1E2A5E", alpha = 0.8, color = "white") +
+        geom_bar(bins = 20, fill = "#1E2A5E", alpha = 0.8, color = "white") +
         labs(
           x = "Idade (anos)", 
           y = "Frequência",
@@ -137,24 +126,6 @@ mod_idade_server <- function(id, dados) {
           x = "Ano",
           y = "Idade (anos)",
           title = "Distribuição de Idades por Ano"
-        ) +
-        theme_minimal() +
-        theme(
-          plot.title = element_text(face = "bold", hjust = 0.5, size = 16),
-          axis.text = element_text(size = 12),
-          axis.title = element_text(size = 14)
-        )
-    })
-    
-    # Gráfico de densidade
-    output$plot_densidade_idade <- renderPlot({
-      df <- dados_prep()
-      ggplot(df, aes(x = idade_anos)) +
-        geom_histogram(fill = "#18BC9C", alpha = 0.6, color = "#1E2A5E") +
-        labs(
-          x = "Idade (anos)",
-          y = "Densidade",
-          title = "Densidade de Probabilidade das Idades"
         ) +
         theme_minimal() +
         theme(
