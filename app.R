@@ -7,6 +7,7 @@ library(fontawesome)
 library(DT)
 library(dplyr)
 library(lubridate)
+library(rlang)
 
 # Tema elegante
 tema_consultoria <- bs_theme(
